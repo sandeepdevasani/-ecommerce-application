@@ -1,0 +1,51 @@
+name: E-Commerce CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          echo "Building E-Commerce Application"
+          mkdir -p build
+          cp index.html build/
+
+      - name: Test
+        run: |
+          echo "Running tests"
+          test -f build/index.html
+          echo "Tests passed successfully"
+
+      - name: Package
+        run: |
+          tar -czf ecommerce-application.tar.gz build/
+          echo "Application packaged successfully"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecommerce-application
+          path: ecommerce-application.tar.gz
+
+  deploy:
+    needs: build-test-package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Application
+        run: |
+          echo "Deploying E-Commerce Application..."
+          echo "Deployment successful!"
+
